@@ -1,2 +1,2 @@
 
-export const DB_NAME = "Travel Mate"
+export const DB_NAME = "travel_mate"

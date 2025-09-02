@@ -59,7 +59,7 @@ const userSchema = new Schema(
 
         avatar:{
             type: String,
-            required: true
+            // required: true
         },
 
         isEmailVerified: {
@@ -86,7 +86,7 @@ const userSchema = new Schema(
             select: false // Don't include in queries by default
         },
 
-        roles: {
+        role: {
             type: [String],
             enum: [
                 "user",          // consumer (default)
