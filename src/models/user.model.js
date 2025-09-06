@@ -83,7 +83,6 @@ const userSchema = new Schema(
                 },
                 message: "Password must contain at least one lowercase letter, uppercase letter, number and special character"
             },
-            select: false // Don't include in queries by default
         },
 
         role: {
