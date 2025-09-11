@@ -1,7 +1,7 @@
 import { asyncHandler } from "../../utils/asyncHandler.js"
 import {ApiError} from "../../utils/ApiError.js"
 import { ApiResponse } from "../../utils/ApiResponse.js"
-import {loginUserService, logoutUserService} from "../../services/v1/auth.service.js"
+import {loginUserService, logoutUserService, deleteUserService} from "../../services/v1/auth.service.js"
 
 
 const login = asyncHandler(async(req,res)=>{
@@ -56,8 +56,31 @@ const logout = asyncHandler(async(req,res)=>{
 })
 
 
+const deleteUser = asyncHandler(async (req, res) => {
+  try {
+    
+    const result = await deleteUserService({ _id: req.user._id });
+    
+    // Clear cookies if deleting own account
+    const options = {
+      httpOnly: true,
+      secure: true
+    };
+    
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json(new ApiResponse(200, result, "User deleted successfully"));
+      
+  } catch (error) {
+    throw new ApiError(500, error.message || "Failed to delete user");
+  }
+});
+
 
 export{
     login,
-    logout
+    logout,
+    deleteUser
 }

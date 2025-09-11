@@ -52,7 +52,10 @@ const userSchema = new Schema(
             trim: true,
             index: true,
             validate:{
-                validator: (value) => validator.isMobilePhone(value),
+                validator: (value) => {
+                    // Add more specific validation
+                    return validator.isMobilePhone(value, 'any', { strictMode: false })
+                },
                 message: "Please enter a valid mobile number" 
             }
         },
@@ -103,7 +106,16 @@ const userSchema = new Schema(
 
     },
     {
-        timestamps:true
+        timestamps:true,
+
+        toJSON: {
+            transform: function(doc, ret) {
+                delete ret.createdAt
+                delete ret.updatedAt
+                delete ret.__v
+                return ret
+            }
+        }
     }
 )
 
