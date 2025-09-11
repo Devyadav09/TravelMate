@@ -1,7 +1,14 @@
 import { asyncHandler } from "../../utils/asyncHandler.js"
 import {ApiError} from "../../utils/ApiError.js"
 import { ApiResponse } from "../../utils/ApiResponse.js"
-import {registerUserService, updatedUserService, updateUserEmailService, updateUserMobileNumberService, getAllUsersService} from "../../services/v1/user.service.js"
+import {registerUserService, 
+    updatedUserService, 
+    updateUserEmailService, 
+    updateUserMobileNumberService, 
+    getAllUsersService, 
+    getCurrentUserService
+} from "../../services/v1/user.service.js"
+
 import { mongo } from "mongoose"
 
 
@@ -82,7 +89,21 @@ const getAllUsers = asyncHandler(async(req,res)=>{
 })
 
 
+const getCurrentUser = asyncHandler(async(req,res)=>{
 
+    const _id = req.user._id
+
+    const user = await getCurrentUserService({_id})
+
+    if(!user){
+        throw new ApiError(404, "No User found")
+    }
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, user, "User found successfully"))
+
+})
 
 
 
@@ -94,5 +115,6 @@ export {
     updatedUser,
     updateUserEmail,
     updateUserMobileNumber,
-    getAllUsers
+    getAllUsers,
+    getCurrentUser
 }

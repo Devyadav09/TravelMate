@@ -146,7 +146,17 @@ const getAllUsersService = async()=>{
     }
 }
 
+const getCurrentUserService = async({_id})=>{
 
+    try{
+
+    const user = await User.findById({_id}).select("-password -refreshToken")
+    return user
+
+    }catch(error){
+        throw new ApiError(500, "Internal Server Error")
+    }
+}
 
 export {
 
@@ -154,6 +164,7 @@ export {
     updatedUserService,
     updateUserEmailService,
     updateUserMobileNumberService,
-    getAllUsersService
+    getAllUsersService,
+    getCurrentUserService
 
 }
