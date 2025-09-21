@@ -50,7 +50,10 @@ const loginUserService = async({email, userName, password})=>{
             accessToken
         }
     }catch(error){
-        throw new ApiError(500,"Internal Server Error")
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
     }
 }
 
@@ -76,7 +79,10 @@ const logoutUserService = async({_id})=>{
 
         return { success: true, message: "User logged out successfully" };
     }catch(error){
-        throw new ApiError(500,"Internal Server Error")
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
     }
 }
 
@@ -100,7 +106,10 @@ const deleteUserService = async({_id})=>{
         };
 
     }catch(error){
-        throw new ApiError(500, "Internal Server Error")
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
     }
 }
 

@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 import validator from "validator"
 
+const ALLOWED_ROLES = ["user", "rideProvider", "rentalProvider"];
 
 
 const registerUserService = async({userName, firstName, lastName, email, mobileNumber, password })=>{
@@ -28,7 +29,10 @@ const registerUserService = async({userName, firstName, lastName, email, mobileN
         return await User.findById(user._id).select("-password -refreshToken")
 
     } catch (error) {
-        throw new ApiError(500,"Internal Server Error")
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
     }
 
 }
@@ -61,7 +65,10 @@ const updatedUserService = async({userName, firstName, lastName, _id})=>{
         return user
 
     } catch (error) {
-        throw new ApiError(500,"Internal Server Error")
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
     }
     
 }
@@ -92,7 +99,10 @@ const updateUserEmailService = async({email, _id})=>{
         return updatedUser
 
     }catch (error) {
-        throw new ApiError(500,"Internal Server Error")
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
     }
     
 }
@@ -127,10 +137,14 @@ const updateUserMobileNumberService = async({mobileNumber, _id})=>{
         return updatedUser
 
     }catch (error) {
-        throw new ApiError(500,"Internal Server Error")
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
     }
     
 }
+
 
 
 const getAllUsersService = async()=>{
@@ -146,6 +160,8 @@ const getAllUsersService = async()=>{
     }
 }
 
+
+
 const getCurrentUserService = async({_id})=>{
 
     try{
@@ -158,6 +174,67 @@ const getCurrentUserService = async({_id})=>{
     }
 }
 
+
+
+const changePasswordService = async({_id, oldPassword, newPassword})=>{
+
+    try{
+
+        const user = await User.findById({_id})
+
+        if(!user) throw new ApiError(404, "User not found")
+
+        const updatePassword = await user.isPasswordCorrect(oldPassword)
+
+        if(updatePassword === false) throw new ApiError(401, "Invaild password please enter correct password")
+
+        user.password = newPassword
+
+        await user.save()
+        
+        return user
+
+    }catch(error){
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
+    }
+}
+
+
+const changeUserRole = async({_id, role})=>{
+
+    try{
+
+        if (!ALLOWED_ROLES.includes(role)) {
+            throw new ApiError(400, "Invalid role");
+        }
+
+        const user = await User.findById({_id})
+
+        if(!user) throw new ApiError(401, "User not found")
+
+        user.role = role
+        await user.save()
+
+        return user;
+        
+
+    }catch(error){
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
+    }
+
+    
+}
+
+
+
+
+
 export {
 
     registerUserService,
@@ -165,6 +242,8 @@ export {
     updateUserEmailService,
     updateUserMobileNumberService,
     getAllUsersService,
-    getCurrentUserService
+    getCurrentUserService,
+    changePasswordService,
+    changeUserRole
 
 }

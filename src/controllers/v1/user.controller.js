@@ -1,15 +1,19 @@
 import { asyncHandler } from "../../utils/asyncHandler.js"
 import {ApiError} from "../../utils/ApiError.js"
 import { ApiResponse } from "../../utils/ApiResponse.js"
+import { mongo } from "mongoose"
 import {registerUserService, 
     updatedUserService, 
     updateUserEmailService, 
     updateUserMobileNumberService, 
     getAllUsersService, 
-    getCurrentUserService
+    getCurrentUserService,
+    changePasswordService,
+    changeUserRole
+
 } from "../../services/v1/user.service.js"
 
-import { mongo } from "mongoose"
+
 
 
 const registerUser = asyncHandler(async(req,res)=>{
@@ -107,7 +111,42 @@ const getCurrentUser = asyncHandler(async(req,res)=>{
 
 
 
+const changePassword = asyncHandler(async(req,res)=>{
 
+    const {oldPassword, newPassword} = req.body
+
+    if(!(oldPassword || newPassword)) throw new ApiError(400, "Password is required")
+
+    const _id = req.user._id
+
+    const updateUserPassword = await changePasswordService({_id, oldPassword, newPassword})
+
+    return res
+    .status(200)
+    .json( new ApiResponse(200, updateUserPassword, "Password Update Successfully"))
+
+})
+
+
+
+const changeRole = asyncHandler(async(req,res)=>{
+
+    const _id = user.req._id
+
+    if(!_id) throw new ApiError(401, "Unauthorized")
+
+    const {role} = req.body
+
+    if(!role) throw new ApiError(400, "user role is required")
+
+    const updateUserRole = await changeUserRole({_id, role})
+
+    if (!updateUserRole) throw new ApiError(500, "Internal Server Error")
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, updateUserRole, "User Role Update Successfully"))
+})
 
 
 export {
@@ -116,5 +155,7 @@ export {
     updateUserEmail,
     updateUserMobileNumber,
     getAllUsers,
-    getCurrentUser
+    getCurrentUser,
+    changePassword,
+    changeRole
 }

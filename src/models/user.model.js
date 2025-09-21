@@ -89,7 +89,7 @@ const userSchema = new Schema(
         },
 
         role: {
-            type: [String],
+            type: String,
             enum: [
                 "user",          // consumer (default)
                 "rideProvider",    // offers rides (driver)
@@ -97,7 +97,7 @@ const userSchema = new Schema(
                 // "companion",      trip/tour companion
                 // "guide",           local tour guide
             ],
-            default: ["user"],
+            default: "user",
         },
 
         refreshToken: {
@@ -145,7 +145,8 @@ userSchema.methods.generateAccessToken = function(){
             _id : this._id,
             email : this.email,
             userName : this.userName,
-            mobileNumber: this.mobileNumber
+            mobileNumber: this.mobileNumber,
+            role: this.role
         },
         process.env.ACCESS_TOKEN_SECRET,
         {

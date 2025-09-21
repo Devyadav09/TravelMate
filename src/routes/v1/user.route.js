@@ -1,14 +1,17 @@
 import {Router} from "express";
+import {login, logout, deleteUser} from "../../controllers/v1/auth.controller.js"
+import { verifyJwt } from "../../middlewares/auth.middlewares.js";
 import {registerUser, 
     updatedUser, 
     updateUserEmail, 
     updateUserMobileNumber, 
     getAllUsers,
-    getCurrentUser
+    getCurrentUser,
+    changePassword,
+    changeRole
+
 } from "../../controllers/v1/user.controller.js"
 
-import {login, logout, deleteUser} from "../../controllers/v1/auth.controller.js"
-import { verifyJwt } from "../../middlewares/auth.middlewares.js";
 
 const router = Router()
 
@@ -19,10 +22,14 @@ router.route("/login").post(login)
 router.route("/logout").post(verifyJwt,logout)
 router.route("/delete").delete(verifyJwt,deleteUser)
 router.route("/update").patch(verifyJwt,updatedUser)
-router.route("/update-email").patch(verifyJwt,updateUserEmail)
-router.route("/update-mobile-number").patch(verifyJwt,updateUserMobileNumber)
+router.route("/changePassword").patch(verifyJwt,changePassword)
+router.route("/updateEmail").patch(verifyJwt,updateUserEmail)
+router.route("/updateMobileNumber").patch(verifyJwt,updateUserMobileNumber)
+router.route("/updateUserRole").patch(verifyJwt,changeRole)
 router.route("/users").get(verifyJwt,getAllUsers)
 router.route("/user").get(verifyJwt,getCurrentUser)
+
+
 
 
 
