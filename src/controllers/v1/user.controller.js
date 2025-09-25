@@ -9,7 +9,7 @@ import {registerUserService,
     getAllUsersService, 
     getCurrentUserService,
     changePasswordService,
-    changeUserRole
+    changeUserRoleToDriverService
 
 } from "../../services/v1/user.service.js"
 
@@ -129,17 +129,17 @@ const changePassword = asyncHandler(async(req,res)=>{
 
 
 
-const changeRole = asyncHandler(async(req,res)=>{
+const changeUserRoleToDriver = asyncHandler(async(req,res)=>{
 
-    const _id = user.req._id
-
+    const _id = req.user._id
+    
     if(!_id) throw new ApiError(401, "Unauthorized")
 
-    const {role} = req.body
+    const {role, vehicleDetails, licenseNumber} = req.body
 
-    if(!role) throw new ApiError(400, "user role is required")
+    if(!(role && vehicleDetails && licenseNumber)) throw new ApiError(400, "user role, vehicle details and license number is required")
 
-    const updateUserRole = await changeUserRole({_id, role})
+    const updateUserRole = await changeUserRoleToDriverService({_id, role, vehicleDetails, licenseNumber})
 
     if (!updateUserRole) throw new ApiError(500, "Internal Server Error")
 
@@ -157,5 +157,5 @@ export {
     getAllUsers,
     getCurrentUser,
     changePassword,
-    changeRole
+    changeUserRoleToDriver
 }

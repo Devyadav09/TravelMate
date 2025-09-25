@@ -1,15 +1,16 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import {ApiError} from "../../utils/ApiError.js"
 import { User} from "../../models/user.model.js"
+import { Driver } from "../../models/driver.model.js"
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose";
 import validator from "validator"
 
-const ALLOWED_ROLES = ["user", "rideProvider", "rentalProvider"];
+const ALLOWED_ROLES = ["user", "driver", "rentalProvider"];
 
 
-const registerUserService = async({userName, firstName, lastName, email, mobileNumber, password })=>{
+const registerUserService = async({userName, firstName, lastName, email, mobileNumber, password})=>{
     
     try {
         
@@ -17,13 +18,17 @@ const registerUserService = async({userName, firstName, lastName, email, mobileN
     
         if(existedUser) throw new ApiError(409, "User with email , mobileNumber or userName already existed")
 
+        // if (!ALLOWED_ROLES.includes(role)) {
+        //     throw new ApiError(400, "Invalid role");
+        // }
+        
         const user = await User.create({
             userName,
             firstName,
             lastName,
             email,
             mobileNumber,
-            password
+            password,
         })
 
         return await User.findById(user._id).select("-password -refreshToken")
@@ -203,24 +208,39 @@ const changePasswordService = async({_id, oldPassword, newPassword})=>{
 }
 
 
-const changeUserRole = async({_id, role})=>{
+const changeUserRoleToDriverService = async({_id, role, vehicleDetails, licenseNumber}) => {
 
     try{
 
-        if (!ALLOWED_ROLES.includes(role)) {
+        if (!ALLOWED_ROLES.includes(role.toLowerCase())) {
             throw new ApiError(400, "Invalid role");
         }
 
         const user = await User.findById({_id})
-
-        if(!user) throw new ApiError(401, "User not found")
-
-        user.role = role
-        await user.save()
-
-        return user;
         
+        if(!user) throw new ApiError(401, "User not found")
+        
+        if(role.toLowerCase() == "driver"){
+            
+            const existingDriver = await Driver.findOne({ userId: _id})
+            
+            if(existingDriver) throw new ApiError(400, "Driver is already exist")
+            
+            
+            const driver = new Driver({
+                userId: _id,
+                vehicleDetails,
+                licenseNumber
+            })
 
+            await driver.save()
+            
+            user.role = role.toLowerCase()
+            await user.save()
+
+            return driver
+        }
+        
     }catch(error){
         if (error instanceof ApiError) {
             throw error;
@@ -244,6 +264,6 @@ export {
     getAllUsersService,
     getCurrentUserService,
     changePasswordService,
-    changeUserRole
+    changeUserRoleToDriverService
 
 }

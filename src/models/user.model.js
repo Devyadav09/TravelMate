@@ -92,7 +92,7 @@ const userSchema = new Schema(
             type: String,
             enum: [
                 "user",          // consumer (default)
-                "rideProvider",    // offers rides (driver)
+                "driver",    // offers rides (driver)
                 "rentalProvider",  // offers vehicles for rent
                 // "companion",      trip/tour companion
                 // "guide",           local tour guide
