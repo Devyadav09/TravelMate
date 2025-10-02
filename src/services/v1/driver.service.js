@@ -46,7 +46,7 @@ const changeDriverRoleToUserService = async({userId, role})=>{
 const updateVehicleDetailsService = async({_id, vehicleDetails})=>{
     try{
 
-        const driverVehicle = await findById({_id})
+        const driverVehicle = await Driver.findById({_id})
 
         if(!driverVehicle) throw new ApiError(404, "Driver ID is required")
 

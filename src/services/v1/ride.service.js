@@ -2,6 +2,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js"
 import {ApiError} from "../../utils/ApiError.js"
 import { User} from "../../models/user.model.js"
 import { Driver } from "../../models/driver.model.js"
+import { Ride } from "../../models/ride.model.js"
 import { ApiResponse } from "../../utils/ApiResponse.js"
 import jwt from "jsonwebtoken"
 import mongoose from "mongoose"
@@ -14,12 +15,12 @@ const createRideService = async({userId, rideDetails})=>{
 
         const driver = await Driver.findOne({userId})
         if(!driver) throw new ApiError(403, "User is not registered as driver")
-
+        
         const newRide = await Ride.create({
             driverId: driver._id,     
             ...rideDetails,
         });
-
+        
         driver.activeRides.push(newRide._id);
         await driver.save();
 
@@ -34,6 +35,8 @@ const createRideService = async({userId, rideDetails})=>{
 
 }
 
+
+// const getRidesService = async()
 
 
 export {

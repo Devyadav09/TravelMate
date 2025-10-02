@@ -8,7 +8,7 @@ import {changeDriverRoleToUser,
 const router = Router()
 
 router.route("/changeDriverRole/:userId").patch(verifyJwt,authorizeRoles("driver"),changeDriverRoleToUser)
-router.route("/updateVehicleDetails/:driverId").patch(verifyJwt,authorizeRoles("driver"),updateVehicleDetails)
+router.route("/updateVehicleDetails/:_id").patch(verifyJwt,authorizeRoles("driver"),updateVehicleDetails)
 
 
 
