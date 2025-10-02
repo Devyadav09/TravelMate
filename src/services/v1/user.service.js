@@ -224,7 +224,18 @@ const changeUserRoleToDriverService = async({_id, role, vehicleDetails, licenseN
             
             const existingDriver = await Driver.findOne({ userId: _id})
             
-            if(existingDriver) throw new ApiError(400, "Driver is already exist")
+            // if(existingDriver) throw new ApiError(400, "Driver is already exist")
+
+            if(existingDriver && user.role == "driver"){
+                throw new ApiError(400, "Driver is already exist")
+            }
+
+            if(existingDriver && user.role == "user"){
+                user.role = role
+                await user.save()
+
+                return existingDriver
+            }
             
             
             const driver = new Driver({

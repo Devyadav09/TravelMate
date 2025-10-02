@@ -132,8 +132,10 @@ const changePassword = asyncHandler(async(req,res)=>{
 const changeUserRoleToDriver = asyncHandler(async(req,res)=>{
 
     const _id = req.user._id
+
+    const { userId } = req.params
     
-    if(!_id) throw new ApiError(401, "Unauthorized")
+    if(_id != userId) throw new ApiError(401, "Unauthorized")
 
     const {role, vehicleDetails, licenseNumber} = req.body
 

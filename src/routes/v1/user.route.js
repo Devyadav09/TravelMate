@@ -25,15 +25,9 @@ router.route("/update").patch(verifyJwt,updatedUser)
 router.route("/changePassword").patch(verifyJwt,changePassword)
 router.route("/updateEmail").patch(verifyJwt,updateUserEmail)
 router.route("/updateMobileNumber").patch(verifyJwt,updateUserMobileNumber)
-router.route("/updateUserRole").post(verifyJwt,changeUserRoleToDriver)
+router.route("/updateUserRole/:userId").post(verifyJwt,changeUserRoleToDriver)
 router.route("/users").get(verifyJwt,getAllUsers)
 router.route("/user").get(verifyJwt,getCurrentUser)
-
-
-
-
-
-
 
 
 
