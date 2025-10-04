@@ -27,6 +27,8 @@ const createRideSchema = Joi.object({
     "date.greater": "Arrival time must be after departure time",
   }),
 
+  rideDate: Joi.date().iso().required(),
+
   pricePerSeat: Joi.number().min(0).required(),
   availableSeats: Joi.number().min(1).required(),
 

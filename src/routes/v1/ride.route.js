@@ -7,7 +7,7 @@ import { createRide } from "../../controllers/v1/ride.controller.js"
 
 const router = Router()
 
-router.route("/rides").post(verifyJwt,authorizeRoles("driver"),validate(createRideSchema),createRide)
+router.route("/rides").post(verifyJwt,authorizeRoles("driver"),validate(createRideSchema, "body"),createRide)
 
 
 

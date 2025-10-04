@@ -36,7 +36,7 @@ const createRideService = async({userId, rideDetails})=>{
 }
 
 
-// const getRidesService = async()
+const searchRideService = async()
 
 
 export {

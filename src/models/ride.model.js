@@ -40,7 +40,14 @@ const rideSchema = new Schema(
       required: true
     },
 
-    arrivalTime: { type: Date },
+    arrivalTime: { 
+      type: Date 
+    },
+
+    rideDate: {
+      type: Date,
+      required: true
+    },
 
     pricePerSeat: {
       type: Number,
@@ -101,7 +108,7 @@ const rideSchema = new Schema(
   }
 );
 
-// ✅ Add GeoSpatial Indexes
+//Add GeoSpatial Indexes
 rideSchema.index({ departureLocation: "2dsphere" });
 rideSchema.index({ arrivalLocation: "2dsphere" });
 
