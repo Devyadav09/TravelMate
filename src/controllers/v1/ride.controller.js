@@ -2,7 +2,9 @@ import { asyncHandler } from "../../utils/asyncHandler.js"
 import {ApiError} from "../../utils/ApiError.js"
 import { ApiResponse } from "../../utils/ApiResponse.js"
 import { mongo } from "mongoose"
-import {createRideService} from "../../services/v1/ride.service.js"
+import {createRideService,
+    searchRidesService
+} from "../../services/v1/ride.service.js"
 import { Driver } from "../../models/driver.model.js"
 
 
@@ -24,6 +26,21 @@ const createRide = asyncHandler(async(req,res)=>{
 
 
 
+const searchRides = asyncHandler(async (req, res, next) => {
+  try {
+    const rides = await searchRidesService(req.query); // GET query params
+    res.status(200).json({
+      success: true,
+      statuscode: 200,
+      message: "Rides fetched successfully",
+      data: rides
+    });
+  } catch (error) {
+    next(new ApiError(error.statusCode || 500, error.message || "Internal Server Error"));
+  }
+})
+
 export {
-    createRide
+    createRide,
+    searchRides
 }

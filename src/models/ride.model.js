@@ -37,11 +37,14 @@ const rideSchema = new Schema(
 
     departureTime: {
       type: Date,
-      required: true
+      required: true,
+      index: true
     },
 
     arrivalTime: { 
-      type: Date 
+      type: Date,
+      required: true,
+      index: true
     },
 
     rideDate: {
@@ -111,6 +114,11 @@ const rideSchema = new Schema(
 //Add GeoSpatial Indexes
 rideSchema.index({ departureLocation: "2dsphere" });
 rideSchema.index({ arrivalLocation: "2dsphere" });
+rideSchema.index({ departureTime: 1, status: 1 });
+rideSchema.index({ arrivalTime: 1, status: 1 });
+rideSchema.index({ driverId: 1, status: 1 });
+
+
 
 // Validation Hook
 rideSchema.pre("save", function (next) {
