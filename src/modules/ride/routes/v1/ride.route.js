@@ -12,7 +12,7 @@ import { createRideSchema,
 import { createRide,
     searchRides,
     driverAllRides
- } from "../../controllers/v1/ride.controller.js"
+ } from "../../../ride/controllers/v1/ride.controller.js"
 
 const router = Router()
 

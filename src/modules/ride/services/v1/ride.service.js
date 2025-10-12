@@ -1,12 +1,6 @@
-import { asyncHandler } from "../../utils/asyncHandler.js"
 import {ApiError} from "../../utils/ApiError.js"
-import { User} from "../../models/user.model.js"
-import { Driver } from "../../models/driver.model.js"
-import { Ride } from "../../models/ride.model.js"
-import { ApiResponse } from "../../utils/ApiResponse.js"
-import jwt from "jsonwebtoken"
-import mongoose from "mongoose"
-import validator from "validator"
+import { Driver } from "../../../driver/models/driver.model.js"
+import { Ride } from "../../../ride/models/ride.model.js"
 import moment from "moment";
 
 
@@ -459,7 +453,6 @@ const getDriverRidesService = async({userId})=>{
   return rides
 
 }
-
 
 
 export {

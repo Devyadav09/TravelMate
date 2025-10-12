@@ -5,7 +5,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js"
 import {createRideService,
     searchRidesService,
     getDriverRidesService
-} from "../../services/v1/ride.service.js"
+} from "../../../ride/services/v1/ride.service.js"
 
 
 
