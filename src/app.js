@@ -1,7 +1,7 @@
 import express from "express"
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import v1Routes from "./routes/v1/index.js";
+import v1Routes from "../src/routes/index.js";
 import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();

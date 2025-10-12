@@ -1,4 +1,4 @@
-import {ApiError} from "../../utils/ApiError.js"
+import {ApiError} from "../../../../utils/ApiError.js"
 import { Driver } from "../../../driver/models/driver.model.js"
 import { Ride } from "../../../ride/models/ride.model.js"
 import moment from "moment";

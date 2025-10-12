@@ -1,10 +1,6 @@
-import { asyncHandler } from "../../utils/asyncHandler.js";
-import {ApiError} from "../../utils/ApiError.js"
+import {ApiError} from "../../../../utils/ApiError.js"
 import { User} from "../../../user/models/user.model.js"
 import { Driver } from "../../../driver/models/driver.model.js"
-import { ApiResponse } from "../../utils/ApiResponse.js";
-import jwt from "jsonwebtoken"
-import mongoose from "mongoose";
 import validator from "validator"
 
 const ALLOWED_ROLES = ["user", "driver", "rentalProvider"];

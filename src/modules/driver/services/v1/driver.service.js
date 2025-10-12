@@ -1,4 +1,4 @@
-import {ApiError} from "../../utils/ApiError.js"
+import {ApiError} from "../../../../utils/ApiError.js"
 import { User} from "../../../user/models/user.model.js"
 import { Driver } from "../../../driver/models/driver.model.js"
 
