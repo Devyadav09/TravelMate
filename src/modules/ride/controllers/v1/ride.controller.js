@@ -5,7 +5,8 @@ import { ApiResponse } from "../../../../utils/ApiResponse.js"
 import {createRideService,
     searchRidesService,
     getDriverRidesService,
-    bookRideService
+    bookRideService,
+    cancelRideService
 } from "../../../ride/services/v1/ride.service.js"
 
 
@@ -74,10 +75,28 @@ const bookRide = asyncHandler(async(req,res)=>{
 })
 
 
+const cancelRide = asyncHandler(async(req,res)=>{
+
+    const userId = req.user._id
+    const { rideId } = req.body
+
+    const cancelRide = await cancelRideService({userId, rideId})
+
+    if(!cancelRide) throw new ApiError(500, 'Internal Server Error')
+
+    return res
+    .status(201)
+    .json(new ApiResponse(201, cancelRide, "Ride Cancel Successfully"))
+
+})
+
+
+
 
 export {
     createRide,
     searchRides,
     driverAllRides,
-    bookRide
+    bookRide,
+    cancelRide
 }
