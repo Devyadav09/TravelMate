@@ -30,7 +30,7 @@ const createRideSchema = Joi.object({
   rideDate: Joi.date().iso().required(),
 
   pricePerSeat: Joi.number().min(0).required(),
-  availableSeats: Joi.number().min(1).required(),
+  totalSeats: Joi.number().min(1).required(),
 
 
 })

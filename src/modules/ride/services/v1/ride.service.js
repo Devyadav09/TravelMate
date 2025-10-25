@@ -1,8 +1,9 @@
 import {ApiError} from "../../../../utils/ApiError.js"
 import { Driver } from "../../../driver/models/driver.model.js"
 import { Ride } from "../../../ride/models/ride.model.js"
+import { User } from "../../../user/models/user.model.js"
 import moment from "moment";
-
+import mongoose from "mongoose";
 
 
 
@@ -442,7 +443,6 @@ const searchRidesService = async (query) => {
 };
 
 
-
 const getDriverRidesService = async({userId})=>{
 
   const driver = await Driver.findOne({userId})
@@ -455,8 +455,88 @@ const getDriverRidesService = async({userId})=>{
 }
 
 
+const bookRideService = async ({ userId, rideId }) => {
+  const session = await mongoose.startSession();
+
+  try {
+    await session.withTransaction(async () => {
+      
+      const user = await User.findById(userId).session(session);
+      if (!user) throw new ApiError(404, "User not found");
+
+      
+      const ride = await Ride.findById(rideId)
+        .select("status bookedSeats totalSeats passengerIds driverId")
+        .session(session);
+      if (!ride) throw new ApiError(404, "Ride not found");
+
+
+      const driver = await Driver.findById(ride.driverId)
+        .select("userId")
+        .session(session);
+      if (!driver) throw new ApiError(404, "Driver not found");
+      
+
+      if (user._id.equals(driver.userId)) {
+        throw new ApiError(403, "Drivers cannot book their own rides");
+      }
+    
+      if (ride.status !== "published") {
+        throw new ApiError(400, "Ride is not available for booking");
+      }
+
+      // Prevent duplicate booking
+      const alreadyBooked = ride.passengerIds.some(
+        (id) => id.toString() === userId.toString()
+      );
+      if (alreadyBooked) {
+        throw new ApiError(400, "User has already booked this ride");
+      }
+
+      // Try atomic update (seat check + booking in one DB operation)
+      const updateResult = await Ride.updateOne(
+        {
+          _id: rideId,
+          bookedSeats: { $lt: ride.totalSeats }, // only if seats left
+          status: "published",
+        },
+        {
+          $inc: { bookedSeats: 1 },
+          $push: { passengerIds: userId },
+        },
+        { session }
+      );
+
+      // If no document was modified, ride was full or condition failed
+      if (updateResult.matchedCount === 0) {
+        throw new ApiError(400, "No seats available or ride not bookable");
+      }
+    });
+
+    // Fetch populated ride after transaction
+    const populatedRide = await Ride.findById(rideId)
+      .populate("driverId", "name email")
+      .populate("passengerIds", "firstName lastName email");
+
+    return {
+      message: "Ride booked successfully",
+      ride: populatedRide,
+    };
+
+  } catch (error) {
+    if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, "Internal Server Error");
+  } finally {
+    session.endSession();
+  }
+}
+
+
 export {
     createRideService,
     searchRidesService,
-    getDriverRidesService
+    getDriverRidesService,
+    bookRideService
 }

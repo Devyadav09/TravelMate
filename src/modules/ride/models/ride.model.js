@@ -58,7 +58,7 @@ const rideSchema = new Schema(
       min: 0
     },
 
-    availableSeats: {
+    totalSeats: {
       type: Number,
       required: true,
       min: 1
@@ -92,18 +92,6 @@ const rideSchema = new Schema(
         delete ret.updatedAt;
         delete ret.__v;
         delete ret.id;
-
-        if (ret.departureTime) {
-          ret.departureTime = moment(ret.departureTime).format(
-            "YYYY-MM-DD hh:mm A"
-          );
-        }
-        if (ret.arrivalTime) {
-          ret.arrivalTime = moment(ret.arrivalTime).format(
-            "YYYY-MM-DD hh:mm A"
-          );
-        }
-
         return ret;
       }
     },
@@ -122,7 +110,7 @@ rideSchema.index({ driverId: 1, status: 1 });
 
 // Validation Hook
 rideSchema.pre("save", function (next) {
-  if (this.bookedSeats > this.availableSeats) {
+  if (this.bookedSeats > this.totalSeats) {
     return next(new Error("Booked seats cannot exceed available seats"));
   }
   next();
@@ -130,7 +118,7 @@ rideSchema.pre("save", function (next) {
 
 // Virtual Field
 rideSchema.virtual("remainingSeats").get(function () {
-  return this.availableSeats - this.bookedSeats;
+  return this.totalSeats - this.bookedSeats;
 });
 
 export const Ride = mongoose.model("Ride", rideSchema);
