@@ -618,10 +618,124 @@ const cancelRideService = async ({ userId, rideId }) => {
   }
 }
 
+
+const deleteRideService = async({ driverId, rideId}) => {
+
+  const session = await mongoose.startSession()
+  try{
+    await session.withTransaction(async () => {
+      
+      const driver = await Driver.findById(driverId)
+      .select("activeRides")
+      .session(session)
+      if (!driver) throw new ApiError(404, "Driver not found")
+
+      const ride = await Ride.findById(rideId).session(session)
+      if(!ride) throw new ApiError(404, "Ride Not Found")
+
+      await Ride.deleteOne({ _id: rideId }, { session })
+      
+      // 5. Update driver's activeRides
+      await Driver.updateOne(
+        { _id: driverId },
+        { $pull: { activeRides: rideId } },
+        { session }
+      )
+
+      return {
+        deletedRide: ride,
+        message: "Ride deleted successfully"
+      }
+
+      })
+    
+    return result
+
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error
+    }
+    console.error("Cancel ride error:", error)
+    throw new ApiError(500, "Internal Server Error")
+  } finally {
+    session.endSession();
+  }
+
+}
+
+
+const updateRideService = async ({ rideId, driverId, rideData }) => {
+  try {
+
+    const allowedFields = [
+      "departureLocation",
+      "arrivalLocation",
+      "departureTime",
+      "arrivalTime",
+      "rideDate",
+      "pricePerSeat",
+      "totalSeats",
+      "status"
+    ];
+
+    const sanitizedData = {};
+    for (const key of Object.keys(rideData)) {
+      if (allowedFields.includes(key)) {
+        sanitizedData[key] = rideData[key];
+      }
+    }
+
+    if (Object.keys(sanitizedData).length === 0) {
+      throw new ApiError(400, "No valid fields to update");
+    }
+
+    if (
+      sanitizedData.totalSeats !== undefined &&
+      sanitizedData.totalSeats < 1
+    ) {
+      throw new ApiError(400, "totalSeats must be at least 1");
+    }
+
+    const id = await Driver.findOne({ userId: driverId})
+
+    if(!id){
+      throw new ApiError(404, "Driver Not Found")
+    }
+
+    const updatedRide = await Ride.findOneAndUpdate(
+      { _id: rideId, driverId: id._id },
+      { $set: sanitizedData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedRide) {
+      throw new ApiError(404, "Ride not found or unauthorized");
+    }
+
+    if (updatedRide.bookedSeats > updatedRide.totalSeats) {
+      throw new ApiError(400, "Booked seats cannot exceed total seats");
+    }
+
+    return updatedRide;
+
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
+    console.error("Update Ride Error:", error);
+    throw new ApiError(500, "Internal Server Error");
+  }
+}
+
+
+
 export {
     createRideService,
     searchRidesService,
     getDriverRidesService,
     bookRideService,
-    cancelRideService
+    cancelRideService,
+    deleteRideService,
+    updateRideService
 }

@@ -13,7 +13,9 @@ import { createRide,
     searchRides,
     driverAllRides,
     bookRide,
-    cancelRide
+    cancelRide,
+    deleteRide,
+    updateRide
  } from "../../../ride/controllers/v1/ride.controller.js"
 
 const router = Router()
@@ -24,7 +26,11 @@ router.route("/rides").post(verifyJwt,authorizeRoles("driver"),validate(createRi
 router.route("/search").get(verifyJwt,validate(searchRideQuerySchema, "query"),searchRides)
 router.route("/driver-rides").get(verifyJwt,authorizeRoles("driver"),driverAllRides)
 router.route("/book-ride").post(verifyJwt,bookRide)
-router.route("/cancel-ride").post(verifyJwt,cancelRide)
+router.route("/cancel-ride/:rideId").delete(verifyJwt,cancelRide)
+router.route("/delete-ride/:rideId").delete(verifyJwt,authorizeRoles("driver"),deleteRide)
+router.route("/update-ride/:rideId").patch(verifyJwt,authorizeRoles("driver"),updateRide)
+
+
 
 
 

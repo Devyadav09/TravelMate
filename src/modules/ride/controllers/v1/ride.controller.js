@@ -6,7 +6,9 @@ import {createRideService,
     searchRidesService,
     getDriverRidesService,
     bookRideService,
-    cancelRideService
+    cancelRideService,
+    deleteRideService,
+    updateRideService
 } from "../../../ride/services/v1/ride.service.js"
 
 
@@ -78,25 +80,58 @@ const bookRide = asyncHandler(async(req,res)=>{
 const cancelRide = asyncHandler(async(req,res)=>{
 
     const userId = req.user._id
-    const { rideId } = req.body
+    const { rideId } = req.params
 
     const cancelRide = await cancelRideService({userId, rideId})
 
     if(!cancelRide) throw new ApiError(500, 'Internal Server Error')
 
     return res
-    .status(201)
-    .json(new ApiResponse(201, cancelRide, "Ride Cancel Successfully"))
+    .status(200)
+    .json(new ApiResponse(200, cancelRide, "Ride Cancel Successfully"))
 
 })
 
 
 
+const deleteRide = asyncHandler(async(req,res)=>{
+
+  const driverId = req.user._id
+  const {rideId} = req.params
+
+  const deleteRide = await deleteRideService({driverId, rideId})
+
+  if(!deleteRide) throw new ApiError(500, 'Internal Server Error')
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, deleteRide, "Ride Delete Successfully"))
+
+})
+
+
+const updateRide = asyncHandler(async(req,res)=>{
+
+  const { rideId } = req.params
+  const  driverId = req.user._id
+  const rideData = req.body
+
+  const updateRide = await updateRideService({rideId, driverId, rideData})
+
+  if(!updateRide) throw new ApiError(500, 'Internal Server Error')
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, updateRide, "Update Ride Successfully"))
+
+})
 
 export {
     createRide,
     searchRides,
     driverAllRides,
     bookRide,
-    cancelRide
+    cancelRide,
+    deleteRide,
+    updateRide
 }
