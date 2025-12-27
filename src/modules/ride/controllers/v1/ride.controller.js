@@ -112,7 +112,7 @@ const deleteRide = asyncHandler(async(req,res)=>{
 
 const updateRide = asyncHandler(async(req,res)=>{
 
-  const { rideId } = req.params
+  const {rideId} = req.params
   const  driverId = req.user._id
   const rideData = req.body
 
