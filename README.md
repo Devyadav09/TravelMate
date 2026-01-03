@@ -150,80 +150,83 @@ npm run dev
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/api/auth/register` | Register new user | ❌ |
-| POST | `/api/auth/login` | User login | ❌ |
-| POST | `/api/auth/logout` | User logout | ✅ |
+| POST | `/api/v1/auth/login` | User login | ❌ |
+| POST | `/api/v1/auth/logout` | User logout | ✅ |
 
 ### Ride Sharing Endpoints
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/api/rides` | Create ride offer | ✅ Driver |
-| GET | `/api/rides` | Search rides | ✅ |
-| POST | `/api/rides/:id/book` | Book a ride | ✅ User |
-| GET | `/api/rides/my-rides` | Get user's rides | ✅ |
+| POST | `/api/v1/rides` | Create ride offer | ✅ Driver |
+| GET | `/api/v1/rides` | Search rides | ✅ |
+| POST | `/api/v1/rides/:id/book` | Book a ride | ✅ User |
+| GET | `/api/v1/rides/my-rides` | Get user's rides | ✅ |
 
 ### Vehicle Rental Endpoints
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/api/rentals` | List rental vehicle | ✅ Owner |
-| GET | `/api/rentals` | Search rentals by location | ✅ |
-| POST | `/api/rentals/:id/book` | Book rental | ✅ User |
-| GET | `/api/rentals/owner` | Owner's vehicles | ✅ Owner |
+| POST | `/api/v1/rentals` | List rental vehicle | ✅ Owner |
+| GET | `/api/v1/rentals` | Search rentals by location | ✅ |
+| POST | `/api/v1/rentals/:id/book` | Book rental | ✅ User |
+| GET | `/api/v1/rentals/owner` | Owner's vehicles | ✅ Owner |
 
 ### Tour Companions Endpoints
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/api/tours` | Create trip | ✅ User |
-| GET | `/api/tours` | Search trips | ✅ |
-| POST | `/api/tours/:id/join` | Join a trip | ✅ User |
-| GET | `/api/tours/my-trips` | User's trips | ✅ |
+| POST | `/api/v1/tours` | Create trip | ✅ User |
+| GET | `/api/v1/tours` | Search trips | ✅ |
+| POST | `/api/v1/tours/:id/join` | Join a trip | ✅ User |
+| GET | `/api/v1/tours/my-trips` | User's trips | ✅ |
 
 ### Tour Guide Endpoints
 
 | Method | Endpoint | Description | Auth Required |
 |--------|----------|-------------|---------------|
-| POST | `/api/guides/register` | Register as guide | ✅ |
-| GET | `/api/guides` | Search by location | ✅ |
-| GET | `/api/guides/:id` | Get guide profile | ✅ |
-| POST | `/api/guides/:id/book` | Book tour guide | ✅ User |
+| POST | `/api/v1/guides/register` | Register as guide | ✅ |
+| GET | `/api/v1/guides` | Search by location | ✅ |
+| GET | `/api/v1/guides/:id` | Get guide profile | ✅ |
+| POST | `/api/v1/guides/:id/book` | Book tour guide | ✅ User |
 
 ### 🧪 Example cURL Requests
 
 **Register a New User:**
 ```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "John Doe",
-    "email": "john@example.com",
-    "password": "SecurePass123!",
-    "role": "user"
-  }'
+curl -X POST http://localhost:3000/api/v1/users/register' \
+  --header 'Content-Type: application/json' \
+  --body '{
+    "userName": "dummy_09",
+    "firstName": "dummy",
+    "lastName": "dummy",
+    "mobileNumber": "1234567890",
+    "email": "dummy@gmail.com",
+    "password": "********"
+}'
 ```
 
 **Create a Ride Offer:**
 ```bash
-curl -X POST http://localhost:3000/api/rides \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -d '{
-    "from": "New Delhi",
-    "to": "Jaipur",
-    "date": "2026-01-15",
-    "seats": 3,
-    "price": 500
-  }'
+curl -X POST http://localhost:3000/api/v1/rides/rides' \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer <token>
+  --body '{
+    "departureLocation": {
+    "coordinates": [77.209, 28.6139],
+    "address":"New Delhi, India"
+  },
+  
+"arrivalLocation": {
+    "coordinates": [77.1025, 28.7041],
+    "address": "Gurugram, India"
+  },
+  "rideDate": "2025-10-25",
+  "departureTime": "2025-10-25T20:00:00.000Z",
+  "arrivalTime": "2025-10-25T22:00:00.000Z",
+  "pricePerSeat": 200,
+  "totalSeats": 3
+}' 
 ```
-
-**Search Tour Guides:**
-```bash
-curl -X GET "http://localhost:3000/api/guides?location=Goa" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-```
-
 ---
 
 ## 🔐 Role-Based Access Control
